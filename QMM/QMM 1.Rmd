@@ -1,0 +1,217 @@
+---
+title: "QMM-1"
+author: "Yashwanth k"
+date: "2023-09-20"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+
+## R Markdown
+
+
+
+***
+# summary
+ 1. Francesco Schröeder should make - Artisanal Truffles:  40 pounds , Chocolate Nuggets:  12 pounds , Chocolate Bars:  4 pounds 
+  The maximum Revenue he Generates - $1780
+  
+ 2. The shadow prices are 
+ 
+    - Artisanal Truffles: $ 2 
+    - Chocolate Nuggets : $ 30
+    - Chocolate Bars    : $ 6
+    
+ 3. The range of Feasibility 
+    
+    - Artisanal Truffles: 47.5 - 51 pounds
+    - Chocolate Nuggets : 30 - 52 pounds
+    - Chocolate Bars    : 29 - 50 pounds 
+    
+ 4. With the increased order of Chocolate Nuggets:
+ 
+    - New Pounds of Artisanal Truffles:  26.67 
+    - New Pounds of Chocolate Nuggets:  25 
+    - New Pounds of Chocolate Bars:  0
+    
+ 5. Range of optimality 
+    - Artisanal Truffles: $ 20.00 - 38.00
+    - Chocolate Nuggets : $ 22.50 - 26.6
+    - Chocolate Bars    : $ 18.75 - 35.00
+ 
+***
+Load lpSolveAPI
+```{r}
+library(lpSolveAPI)
+```
+
+***
+**Problem Statement: **
+1.A renowned chocolatier, Francesco Schröeder, makes three kinds of chocolate confectionery: artisanal truffles, handcrafted chocolate nuggets, and premium gourmet chocolate bars. He uses the highest quality of cacao butter, dairy cream, and honey as the main ingredients. Francesco makes his chocolates each morning, and they are usually sold out by the early afternoon. For a pound of artisanal truffles, Francesco uses 1 cup of cacao butter, 1 cup of honey, and 1/2 cup of cream. The handcrafted nuggets are milk chocolate and take 1/2 cup of cacao, 2/3 cup of honey, and 2/3 cup of cream for each pound. Each pound of the chocolate bars uses 1 cup of cacao butter, 1/2 cup of honey, and 1/2 cup of cream. One pound of truffles, nuggets, and chocolate bars can be purchased for $35, $25, and $20, respectively. A local store places a daily order of 10 pounds of chocolate nuggets, which means that Francesco needs to make at least 10 pounds of the chocolate nuggets each day. Before sunrise each day, Francesco receives a delivery of 50 cups of cacao butter, 50 cups of honey, and 30 cups of dairy cream.
+
+1.Formulate and solve the LP model that maximizes revenue given the constraints. How much of each chocolate product should Francesco make each morning? What is the maximum daily revenue that he can make?
+
+
+
+2.Report the shadow price and the range of feasibility of each binding constraint.
+
+3.If the local store increases the daily order to 25 pounds of chocolate nuggets, how much of each product should Francesco make?
+***
+
+
+Defining the following variables
+* Decision Variables:
+Let *x1* be the pounds of artisanal truffles produced.
+Let *x2* be the pounds of handcrafted chocolate nuggets produced.
+Let *x3* be the pounds of premium gourmet chocolate bars produced.
+
+The objective is to   *Maximize  Z = 35x1 + 25x2 + 20x3 *
+
+*The constraints are - 
+1.cacao butter : x1 + 1/2 x2 + x3 <= 50 cups 
+2.Honey        : x1 + 2/3 x2 + 1/2 x3  <= 50 cups
+3.cream         : 1/2 x1 + 2/3 x2 + 1/2 x3 <= 30 cups 
+4.Nugget production : x2 >= 10 pounds(store orders atleast 10 pounds)
+5.Non-negativity constraint : x1,x2,x3 >= 0
+```{r}
+#Creating an LP object with 0 constraints and 3 decision variables
+Sweets <- make.lp(0,3)
+
+#Set the objective function coefficients for each product
+set.objfn(Sweets,c(35,25,20))
+
+
+# Set the direction to maximize
+lp.control(Sweets,sense="max")
+
+#The ingredient constraints
+add.constraint(Sweets, c(1,1/2,1), "<=", 50)
+add.constraint(Sweets, c(1,2/3,1/2), "<=", 50)
+add.constraint(Sweets, c(1/2,2/3,1/2), "<=", 30)
+
+#The chocolate nuggets order constraint
+
+add.constraint(Sweets, c(0,1,0), ">=", 10)
+
+# Set bounds for variables (non-negativity constraints)
+set.bounds(Sweets, lower = c(0, 0, 0), columns = c(1, 2, 3))
+
+
+# To identify the variables and constraints, we can
+# set variable names and name the constraints
+RowNames <- c("cacao", "Honey","cream","nuggets")
+ColNames <- c("artisanaltruffles", "chocolatenuggets","chocolatebars")
+dimnames(Sweets) <- list(RowNames, ColNames)
+
+# Now, print out the model
+Sweets
+
+#Saving the model to a file 
+write.lp(Sweets, filename = "Confecs.lp", type = "lp")
+
+
+#solving the lp model
+solve(Sweets)
+```
+
+
+The output indicates that the answer is 0,there was a successful solution
+We now output the value of the objective function, and the variables
+
+```{r}
+
+# Get the maximum daily revenue and the values of decision variables
+max_revenue <- get.objective(Sweets)
+truffles_pounds <- get.variables(Sweets)[1]
+nuggets_pounds <- get.variables(Sweets)[2]
+bars_pounds <- get.variables(Sweets)[3]
+
+
+# Print the results
+cat("Maximum Daily Revenue: $", round(max_revenue, 2), "\n")
+cat("Pounds of Artisanal Truffles: ", round(truffles_pounds, 2), "\n")
+cat("Pounds of Chocolate Nuggets: ", round(nuggets_pounds, 2), "\n")
+cat("Pounds of Chocolate Bars: ", round(bars_pounds, 2), "\n")
+
+
+```
+
+```{r}
+confec <- read.lp("Confecs.lp") # create an lp object confec
+confec
+```
+
+Solve the lp model
+```{r}
+solve(confec)
+get.objective(confec)        # get objective value
+get.variables(confec)        # get values of decision variables
+get.constraints(confec)      # get constraint RHS values
+```
+ 
+* 2 Report the shadow price and the range of feasibility of each binding constraint
+```{r}
+get.sensitivity.rhs(confec)  # get shadow prices
+get.sensitivity.obj(confec)  # get reduced cost
+
+
+
+```
+
+* 3-If the local store increases the daily order to 25 pounds of chocolate nuggets, how much of each product should Francesco make?
+
+```{r}
+Sweets <- make.lp(0,3)
+
+#Set the objective function coefficients for each product
+set.objfn(Sweets,c(35,25,20))
+
+
+# Set the direction to maximize
+lp.control(Sweets,sense="max")
+
+#The ingredient constraints
+add.constraint(Sweets, c(1,1/2,1), "<=", 50)
+add.constraint(Sweets, c(1,2/3,1/2), "<=", 50)
+add.constraint(Sweets, c(1/2,2/3,1/2), "<=", 30)
+
+#The chocolate nuggets order constraint
+
+add.constraint(Sweets, c(0,1,0), ">=", 25)
+
+# Set bounds for variables (non-negativity constraints)
+set.bounds(Sweets, lower = c(0, 0, 0), columns = c(1, 2, 3))
+
+
+# To identify the variables and constraints, we can
+# set variable names and name the constraints
+RowNames <- c("cacao", "Honey","cream","nuggets")
+ColNames <- c("artisanaltruffles", "chocolatenuggets","chocolatebars")
+dimnames(Sweets) <- list(RowNames, ColNames)
+
+#Saving the model to a file 
+write.lp(Sweets, filename = "Confecs.lp", type = "lp")
+
+
+#solving the lp model
+solve(Sweets)
+```
+# Get the maximum daily revenue and the values of decision variables
+```{r}
+max_revenue <- get.objective(Sweets)
+Constraints <- get.constraints(Sweets)
+truffles_pounds <- get.variables(Sweets)[1]
+nuggets_pounds <- get.variables(Sweets)[2]
+bars_pounds <- get.variables(Sweets)[3]
+
+
+# Print the results
+cat("Maximum Daily Revenue: $", round(max_revenue, 2), "\n")
+cat("Pounds of Artisanal Truffles: ", round(truffles_pounds, 2), "\n")
+cat("Pounds of Chocolate Nuggets: ", round(nuggets_pounds, 2), "\n")
+cat("Pounds of Chocolate Bars: ", round(bars_pounds, 2), "\n")
+cat("All constraints: ", round(Constraints, 2), "\n")
+
+```
