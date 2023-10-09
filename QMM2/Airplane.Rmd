@@ -1,5 +1,5 @@
 ---
-title: "Airplane"
+title: "Transportation Model"
 author: "Yashwanth k"
 date: "2023-10-02"
 output:
@@ -9,19 +9,24 @@ output:
 
 #summary
 - The supply of the engines for the months 1,2,3,4 are 25,35,30,10
+
 - The demand for the first four months are 10, 15, 25 and 20
-- The production cost for month 1 is 1.08 Now if an item produced in month 1 and    it is help for month 2 . 
-  The cost for the production = month 1 cost + Unit Cost of the storage
+
+- The production cost for month 1 is 1.08 Now if an item produced in month 1 and    it is help for month 2
+
+- The cost for the production = month 1 cost + Unit Cost of the storage
     
      1.08 + 0.015 = 1.095
      
 
-   It was similar for all the months 
-       cost of the production -
+- It was similar for all the months 
+
+- cost of the production -
           1- 1.095
           2- 1.11
           3- 1.125
-   The total production cost was - 77.3 
+          
+- The total production cost was - 77.3 
 - The cost is expressed in millions 
 
 - To reduce the costs the production must be higher in the first months and they     can be utilised in the following months 
@@ -46,11 +51,14 @@ Because of the variations in production costs, it may well be worthwhile to prod
 
 The production manager wants a schedule developed for the number of engines to be produced in each of the four months so that the total of the production and storage costs will be minimized.
 ***
+
 ***
 Objective - Minimizing the cost of production
 
 min : 1.080 x11 + 1.095 x12 + 1.110 x13 +  1.125 x14 + 45x21 + 1.110 x22 + 1.125 x23 + 1.140 x24  + 45 x31 + 45 x32 + 1.100 x33 + 1.115 x34  + 45 x41 + 45 x42 + 45 x43 + 1.130 x44 ;
+
 ***
+
 ```{r}
 library(lpSolveAPI)
 ```
