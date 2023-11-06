@@ -1,0 +1,19 @@
+"","Energy Policy","Scheduling Model","Work-Load","D.C. Size","Shut Downs","Computing Time (h)","MWh Consumed","Queue Time (ms)"
+"1","Always","Monolithic","High",1000,37166,104.42,49.01,90.1
+"2","Margin","Mesos","High",1000,13361,104.26,49.65,1093
+"3","Gamma","Omega","High",1000,14252,104.17,49.6,0.1
+"4","Always","Mono.","Low",1000,36404,49.25,23.92,78.3
+"5","Exponential","Mesos","Low",1000,19671,49.63,24.65,1188.7
+"6","Load","Omega","Low",1000,32407,49.34,24.19,1.1
+"7","Margin","Mono.","High",5000,6981,99.96,237.09,126.2
+"8","Gamma","Mono.","High",5000,9877,99.96,235.92,129.8
+"9","Random","Mesos","High",5000,33589,100.03,234.9,1122.6
+"10","Margin","Omega","High",5000,8578,100.26,239.13,0.7
+"11","Exponential","Omega","High",5000,11863,100.26,236.95,1
+"12","Margin","Omega","Low",5000,15452,46.7,115.82,0.5
+"13","Margin","Mono.","High",10000,9680,101.56,481.36,325.2
+"14","Gamma","Mono.","High",10000,11388,101.56,479.36,327.9
+"15","Margin","Omega","High",10000,18150,101.63,486.11,2.6
+"16","Gamma","Omega","High",10000,18409,101.63,484.69,2.5
+"17","Gamma","Mesos","Low",10000,29707,45.83,228.31,1107.6
+"18","Random","Omega","Low",10000,40772,46.09,233.5,3.8
